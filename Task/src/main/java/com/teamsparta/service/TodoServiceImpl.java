@@ -25,7 +25,7 @@ public class TodoServiceImpl implements TodoService {
         todo.setContent(todoRequestDTO.getContent());//마찬가지의 방법으로 내용을 가져옴
         todo.setAssignee(todoRequestDTO.getAssignee());
         todo.setPassword(todoRequestDTO.getPassword());
-        todo.setCreationDate(new Date());//현재 날짜를 저장
+        todo.setCreatedAt(new Date());//현재 날짜를 저장
 
         Todo createdTodo = todoRepository.save(todo);//todoRepository를 이용해 todo 객체를 데이터베이스에 저장하고, 저장된 todo를 createdTodo에 저장
         return convertToResponseDTO(createdTodo); // Todo를 TodoResponseDTO로 변환
@@ -50,7 +50,7 @@ public class TodoServiceImpl implements TodoService {
 //    }
     @Override
     public List<TodoResponseDTO> getAll() {
-        List<Todo> todos = todoRepository.findAllByOrderByIdDesc();
+        List<Todo> todos = todoRepository.findAllByOrderByCreatedAtDesc();
         List<TodoResponseDTO> todoResponseDTOs = todos.stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
@@ -96,7 +96,7 @@ public class TodoServiceImpl implements TodoService {
         responseDTO.setTitle(todo.getTitle());// dto의 setter 덕븐에 사용
         responseDTO.setContent(todo.getContent());
         responseDTO.setAssignee(todo.getAssignee());
-        responseDTO.setCreationDate(todo.getCreationDate());
+        responseDTO.setCreationDate(todo.getCreatedAt());
         return responseDTO;
     }
 }

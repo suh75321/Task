@@ -14,6 +14,6 @@ public class Todo {
     private String content;//내용
     private String assignee;//담당자
     private String password;//비번
-    private Date creationDate;//작성일
+    private Date createdAt;//작성일
 
 }
