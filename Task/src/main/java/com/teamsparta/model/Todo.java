@@ -9,6 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class Todo {
 
+    private Long id; // 고유 id
     private String title;// 제목
     private String content;//내용
     private String assignee;//담당자
