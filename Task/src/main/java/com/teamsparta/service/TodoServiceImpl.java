@@ -39,9 +39,9 @@ public class TodoServiceImpl implements TodoService {
 //    }
     @Override
     public TodoResponseDTO get(Long id) {
-        Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Todo not found"));
-        return convertToResponseDTO(todo); // Todo를 TodoResponseDTO로 변환
+        Todo todo = todoRepository.findById(id)//todo의 아이디로 조회
+                .orElseThrow(() -> new RuntimeException("Todo not found"));//Optional인 orElseThrow로 아이디가 없으면 익셉션
+        return convertToResponseDTO(todo); // Todo를 TodoResponseDTO로 변환,
     }
 
 //    @Override
@@ -50,34 +50,41 @@ public class TodoServiceImpl implements TodoService {
 //    }
     @Override
     public List<TodoResponseDTO> getAll() {
-        List<Todo> todos = todoRepository.findAllByOrderByCreatedAtDesc();
+        List<Todo> todos = todoRepository.findAllByOrderByCreatedAtDesc();//내림차순으로 모든 todo를 가져옴 밑에 에외처리
+
+        if (todos.isEmpty()) {
+            throw new RuntimeException("No todos found");
+        }//데이터 비엇을경우 예외처리
+
         List<TodoResponseDTO> todoResponseDTOs = todos.stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
         return todoResponseDTOs; // List<Todo>를 List<TodoResponseDTO>로 변환
-    }
+    }//아무것도 없을때 예외처리 추가하기, 이거 좀더 살펴보기
 
     @Override
     public TodoResponseDTO update(Long id, TodoRequestDTO todoRequestDTO, String password) {
-
+//비번, 아이디, 리퀘스트를 받아 리스폰스를 반환
 //    public Todo update(Long id, TodoRequestDTO todoRequestDTO, String password) {
-        Todo existingTodo = todoRepository.findById(id)
+        Todo existingTodo = todoRepository.findById(id)//아이디 찾고 없으면 예외
                 .orElseThrow(() -> new RuntimeException("Todo not found"));
 
-        if (!existingTodo.getPassword().equals(password)) {
+        if (!existingTodo.getPassword().equals(password)) {//비번 안맞으면 예외
             throw new RuntimeException("Invalid password");
         }
-
-        existingTodo.setTitle(todoRequestDTO.getTitle());//dto의 getter, setter 덕분에 사용
+//dto의 getter, setter 덕분에 사용
+        existingTodo.setTitle(todoRequestDTO.getTitle());//todoRequestDTO의 getTitle()를 호출하여 할 일의 제목을 가져옴
         existingTodo.setContent(todoRequestDTO.getContent());
         existingTodo.setAssignee(todoRequestDTO.getAssignee());
+
+        existingTodo.setPassword(todoRequestDTO.getPassword());// 비밀번호도 수정 되니까 추가
+
 
         Todo updatedTodo = todoRepository.save(existingTodo);
         return convertToResponseDTO(updatedTodo); // Todo를 TodoResponseDTO로 변환
         //        return todoRepository.save(existingTodo);
 
     }
-
 
     @Override
     public void delete(Long id, String password) {
@@ -91,9 +98,12 @@ public class TodoServiceImpl implements TodoService {
         todoRepository.delete(todo);
     }
 
-    private TodoResponseDTO convertToResponseDTO(Todo todo) {
-        TodoResponseDTO responseDTO = new TodoResponseDTO();
-        responseDTO.setTitle(todo.getTitle());// dto의 setter 덕븐에 사용
+    private TodoResponseDTO convertToResponseDTO(Todo todo) {//todo를 TodoResponseDTO로 전환
+        TodoResponseDTO responseDTO = new TodoResponseDTO();//새로운 TodoResponseDTO 생성
+        // dto의 setter 덕분에 사용
+        responseDTO.setId(todo.getId());//아이디 추가함.. 빼먹은게 많다..
+
+        responseDTO.setTitle(todo.getTitle());//todo의 제목을 TodoResponseDTO로 가져옴
         responseDTO.setContent(todo.getContent());
         responseDTO.setAssignee(todo.getAssignee());
         responseDTO.setCreationDate(todo.getCreatedAt());

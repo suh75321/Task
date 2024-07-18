@@ -19,15 +19,15 @@ public class TodoController {
 
     @PostMapping
     public ResponseEntity<TodoResponseDTO> createTodo(@RequestBody TodoRequestDTO todoRequestDTO )
-    {
-        TodoResponseDTO createdTodo = todoService.create(todoRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);
+    {//TodoRequestDTO를 입력받아 todo 생성
+        TodoResponseDTO createdTodo = todoService.create(todoRequestDTO);//서비스를 통해 리퀘스트로 생성, 리스폰스 반환
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTodo);//완료하면 201 반환
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TodoResponseDTO> getTodo(@PathVariable Long id) {
         TodoResponseDTO todoResponseDTO = todoService.get(id);
-        return ResponseEntity.ok(todoResponseDTO);
+        return ResponseEntity.ok(todoResponseDTO);//완료시 리스폰스 보여줌
     }
 
 
