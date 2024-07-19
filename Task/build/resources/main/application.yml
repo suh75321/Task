@@ -1,7 +1,7 @@
 spring:
   mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
     view:
       prefix: /templates/
       suffix: .html
-    pathmatch:
-      matching-strategy: ant_path_matcher
