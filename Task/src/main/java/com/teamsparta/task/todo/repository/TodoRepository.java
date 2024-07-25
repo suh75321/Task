@@ -1,6 +1,6 @@
-package com.teamsparta.task.repository;
+package com.teamsparta.task.todo.repository;
 
-import com.teamsparta.task.model.Todo;
+import com.teamsparta.task.todo.model.Todo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

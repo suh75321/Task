@@ -1,9 +1,6 @@
-package com.teamsparta.task.model;
+package com.teamsparta.task.todo.model;
 //lombok를 통해 Getter,Setter,기본 생성자를 자동 생성
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +9,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity// 꼭 추가하자!!
+@Table(name = "todo")
 
 public class Todo {
 

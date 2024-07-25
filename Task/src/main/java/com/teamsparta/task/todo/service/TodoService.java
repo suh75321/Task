@@ -1,8 +1,8 @@
-package com.teamsparta.task.service;
+package com.teamsparta.task.todo.service;
 
-import com.teamsparta.task.dto.TodoRequestDTO;
-import com.teamsparta.task.dto.TodoResponseDTO;
-import com.teamsparta.task.dto.TodoUpdateDTO;
+import com.teamsparta.task.todo.dto.TodoRequestDTO;
+import com.teamsparta.task.todo.dto.TodoResponseDTO;
+import com.teamsparta.task.todo.dto.TodoUpdateDTO;
 
 
 import java.util.List;

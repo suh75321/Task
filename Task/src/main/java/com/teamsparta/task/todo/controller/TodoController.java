@@ -1,9 +1,9 @@
-package com.teamsparta.task.controller;
+package com.teamsparta.task.todo.controller;
 
-import com.teamsparta.task.dto.TodoRequestDTO;
-import com.teamsparta.task.dto.TodoResponseDTO;
-import com.teamsparta.task.dto.TodoUpdateDTO;
-import com.teamsparta.task.service.TodoService;
+import com.teamsparta.task.todo.dto.TodoRequestDTO;
+import com.teamsparta.task.todo.dto.TodoResponseDTO;
+import com.teamsparta.task.todo.dto.TodoUpdateDTO;
+import com.teamsparta.task.todo.service.TodoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

@@ -1,4 +1,4 @@
-package com.teamsparta.task.dto;
+package com.teamsparta.task.todo.dto;
 
 import lombok.Getter;
 import lombok.Setter;

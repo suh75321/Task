@@ -1,10 +1,10 @@
-package com.teamsparta.task.service;
+package com.teamsparta.task.todo.service;
 
-import com.teamsparta.task.dto.TodoRequestDTO;
-import com.teamsparta.task.dto.TodoResponseDTO;
-import com.teamsparta.task.dto.TodoUpdateDTO;
-import com.teamsparta.task.model.Todo;
-import com.teamsparta.task.repository.TodoRepository;
+import com.teamsparta.task.todo.dto.TodoRequestDTO;
+import com.teamsparta.task.todo.dto.TodoResponseDTO;
+import com.teamsparta.task.todo.dto.TodoUpdateDTO;
+import com.teamsparta.task.todo.model.Todo;
+import com.teamsparta.task.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
