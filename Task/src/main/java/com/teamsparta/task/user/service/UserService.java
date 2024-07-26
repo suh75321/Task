@@ -8,7 +8,7 @@ import com.teamsparta.task.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.teamsparta.task.user.model.UserRoleEnum; // 추가
-import java.sql.Timestamp; // 추가
+import java.time.LocalDateTime;
 
 @Service
 public class UserService {
@@ -35,7 +35,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(nickname, username, password, role, new Timestamp(System.currentTimeMillis()));
+        User user = new User(nickname, username, password, role, LocalDateTime.now());
         userRepository.save(user);
     }
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -31,10 +31,10 @@ public class User {
     private UserRoleEnum role; // 권한 (USER 또는 ADMIN)
 
     @Column(nullable = false, updatable = false)
-    private Timestamp createdAt; // 생성일
+    private LocalDateTime createdAt; // 생성일
 
     // 매개변수를 받는 생성자 추가
-    public User(String nickname, String username, String password, UserRoleEnum  role, Timestamp createdAt) {
+    public User(String nickname, String username, String password, UserRoleEnum  role, LocalDateTime createdAt) {
         this.nickname = nickname;
         this.username = username;
         this.password = password;
@@ -45,7 +45,7 @@ public class User {
     // 생성일 자동 설정을 위한 메서드
     @PrePersist
     protected void onCreate() {
-        this.createdAt = new Timestamp(System.currentTimeMillis());
+        this.createdAt = LocalDateTime.now();
     }
 }
 
