@@ -90,7 +90,7 @@ public class JwtUtil {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);//주어진 JWT를 파싱하고 검증
             return true;//JWT가 유효하면 true 아니면 에러메시지들
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
-            logger.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            logger.error("Invalid JWT signature, 토큰이 유효하지 않습니다.");//토큰이 유효하지 않습니다
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT token, 만료된 JWT token 입니다.");
         } catch (UnsupportedJwtException e) {

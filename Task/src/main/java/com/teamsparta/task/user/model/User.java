@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 @Entity
 @Getter
 @Setter
@@ -16,22 +18,35 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
-
-    @Column(nullable = false)
-    private String password;
+    private String nickname; // 별명
 
     @Column(nullable = false, unique = true)
-    private String email;
+    private String username; // 사용자 이름 (username)
 
+    @Column(nullable = false)
+    private String password; // 비밀번호 (password)
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRoleEnum role; // 권한 (USER 또는 ADMIN)
+
+    @Column(nullable = false, updatable = false)
+    private Timestamp createdAt; // 생성일
 
     // 매개변수를 받는 생성자 추가
-    public User(String username, String password, String email) {
+    public User(String nickname, String username, String password, UserRoleEnum  role, Timestamp createdAt) {
+        this.nickname = nickname;
         this.username = username;
         this.password = password;
-        this.email = email;
+        this.role = role;
+        this.createdAt = createdAt;
     }
 
+    // 생성일 자동 설정을 위한 메서드
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Timestamp(System.currentTimeMillis());
+    }
 }
 
 
