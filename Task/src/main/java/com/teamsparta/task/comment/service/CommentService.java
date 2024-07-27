@@ -11,6 +11,7 @@ import com.teamsparta.task.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class CommentService {
@@ -31,21 +32,24 @@ public class CommentService {
         return commentRepository.findAll();
     }
 
-    public Comment addComment(CommentRequestDto commentRequestDto) {
+    public Comment addComment(CommentRequestDto commentRequestDto, Long todoId, String userId) {
         // 예외 처리
-        if (commentRequestDto.getTodoId() == null) {
-            throw new IllegalArgumentException("일정 ID를 입력해 주세요.");
-        }
+        //예외 처리: 댓글 내용이 비어 있는 경우
         if (commentRequestDto.getContent() == null || commentRequestDto.getContent().isEmpty()) {
             throw new IllegalArgumentException("댓글 내용을 입력해 주세요.");
         }
 
-        // 일정 확인
-        Todo todo = todoRepository.findById(commentRequestDto.getTodoId())
+        // 예외 처리: 선택한 일정의 ID를 입력받지 않은 경우
+        if (todoId == null) {
+            throw new IllegalArgumentException("일정 ID를 입력해 주세요.");
+        }
+
+        // 일정 확인, 예외 처리: 일정이 DB에 저장되지 않은 경우
+        Todo todo = todoRepository.findById(todoId)
                 .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다."));
 
-        // 사용자 확인
-        User user = userRepository.findById(Long.valueOf(commentRequestDto.getUserId()))
+        // 사용자 확인, 예외 처리: 사용자가 DB에 저장되지 않은 경우
+        User user = userRepository.findById(Long.valueOf(userId))
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
 
         // 댓글 생성
@@ -58,13 +62,25 @@ public class CommentService {
 
 
 
-    public Comment updateComment(Long commentId, CommentRequestDto commentRequest, String currentUserId) {
-        // 예외 처리
+
+    public Comment updateComment(Long commentId, CommentRequestDto commentRequest, Long todoId, String userId) {
+        // 예외 처리, 댓글이 비어있는 경우
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
+
+        // 일정 확인. Todo 2에 만든 댓글을 todo1 이라고해도 수정되는거 막기
+        Todo todo = comment.getTodo();
+        if (!Objects.equals(todo.getId(), todoId)) {
+            throw new IllegalArgumentException("댓글이 해당 일정에 속하지 않습니다.");
+        }
+
+        // 사용자 확인
+        User user = userRepository.findById(Long.valueOf(userId))
+                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+
         // 현재 사용자와 댓글 작성자 확인
-        if (!comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
+        if (!comment.getUser().getId().equals(Long.parseLong(userId))) {
             throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
         }
 
@@ -72,19 +88,37 @@ public class CommentService {
         if (commentRequest.getContent() != null && !commentRequest.getContent().isEmpty()) {
             comment.setContent(commentRequest.getContent());
         }
+
+
+
+//        comment.setTodo(todo);
+//        comment.setUser(user); 이것들 있으면 안됨 댓글 수정하면 2번일정에 있던 댓글이 1번으로 감
         return commentRepository.save(comment);
     }
 
 
+
     public void deleteComment(Long commentId, String currentUserId) {
+        // 댓글 ID 유효성 검사
+        if (commentId == null || commentId <= 0) {
+            throw new IllegalArgumentException("댓글 ID가 올바르지 않습니다.");
+        }
+
+        // 댓글 존재 여부 확인
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
-        // 현재 사용자와 댓글 작성자 확인
-        if (!comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
+        // 사용자 ID 유효성 검사
+        if (currentUserId == null || currentUserId.trim().isEmpty()) {
+            throw new IllegalArgumentException("사용자 ID가 올바르지 않습니다.");
+        }
+
+        // 사용자 권한 확인
+        if (comment.getUser() == null || !comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
             throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
         }
 
+        // 댓글 삭제
         commentRepository.delete(comment);
     }
 

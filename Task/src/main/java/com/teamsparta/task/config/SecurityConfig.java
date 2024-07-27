@@ -62,6 +62,8 @@ public class SecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/api/users/**").permitAll() // '/api/users/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/api/todos/**").permitAll() // '/api/todos/'로 시작하는 요청 모두 접근 허가
+                        .requestMatchers("/api/comments/**").permitAll() // '/api/comments/'로 시작하는 요청 모두 접근 허가
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Swagger 관련 경로 허용.
                         // 안하면 스웨거도 로그인 해야함
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
@@ -40,8 +40,12 @@ public class CommentController {
 
 
     @PostMapping
-    public ResponseEntity<CommentResponseDto> addComment(@RequestBody CommentRequestDto commentRequest) {
-        Comment createdComment = commentService.addComment(commentRequest);
+    public ResponseEntity<CommentResponseDto> addComment(
+            @RequestBody CommentRequestDto commentRequest,
+            @RequestParam Long todoId,
+            @RequestParam String userId
+    ) {
+        Comment createdComment = commentService.addComment(commentRequest, todoId, userId);
 
         CommentResponseDto responseDto = new CommentResponseDto(
                 createdComment.getCommentId(),
@@ -54,13 +58,14 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequest) {
-        // 현재 로그인한 사용자 ID 가져오기
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUserId = authentication.getName(); // 사용자 ID 추출
-
+    public ResponseEntity<CommentResponseDto> updateComment(
+            @PathVariable Long commentId,
+            @RequestBody CommentRequestDto commentRequest,
+            @RequestParam Long todoId,
+            @RequestParam String userId
+    ) {
         // 댓글 업데이트
-        Comment updatedComment = commentService.updateComment(commentId, commentRequest, currentUserId);
+        Comment updatedComment = commentService.updateComment(commentId, commentRequest, todoId, userId);
 
         CommentResponseDto responseDto = new CommentResponseDto(
                 updatedComment.getCommentId(),
