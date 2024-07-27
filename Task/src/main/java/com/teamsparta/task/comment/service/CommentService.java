@@ -99,26 +99,14 @@ public class CommentService {
 
 
     public void deleteComment(Long commentId, String currentUserId) {
-        // 댓글 ID 유효성 검사
-        if (commentId == null || commentId <= 0) {
-            throw new IllegalArgumentException("댓글 ID가 올바르지 않습니다.");
-        }
-
-        // 댓글 존재 여부 확인
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
-        // 사용자 ID 유효성 검사
-        if (currentUserId == null || currentUserId.trim().isEmpty()) {
-            throw new IllegalArgumentException("사용자 ID가 올바르지 않습니다.");
-        }
-
-        // 사용자 권한 확인
-        if (comment.getUser() == null || !comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
+        // 현재 사용자와 댓글 작성자 확인
+        if (!comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
             throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
         }
 
-        // 댓글 삭제
         commentRepository.delete(comment);
     }
 
