@@ -55,14 +55,4 @@ public class UserService {
         // JWT 토큰 생성
         return jwtUtil.createToken(user.getUsername());
     }
-//수정, 삭제는 요구사항 없었다
-//    public void updateUser(UpdateUserRequestDto requestDto, User user) {
-//        user.setUsername(requestDto.getUsername());
-//        user.setNickname(requestDto.getNickname());
-//        userRepository.save(user);
-//    }
-//
-//    public void deleteUser(User user) {
-//        userRepository.delete(user);
-//    }
 }
