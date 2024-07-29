@@ -1,12 +1,29 @@
 package com.teamsparta.task.todo.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
-public class TodoUpdateDTO {
-    private String title;
-    private String content;
-    private String assignee;
-}//한번 수정하면 비번까지 바뀌는 현상 때문에 비번을 유지하기 위해 만듬
+public record TodoUpdateDTO(
+        @Schema(description = "제목")
+        @Size(min = 1, max = 200)
+        @NotBlank
+        String title,
+
+        @Schema(description = "내용")
+        String content,
+
+        @Schema(description = "담당자 이메일")
+        @NotBlank
+        @Email
+        String username,
+
+        @Schema(description = "비밀번호")
+        @NotBlank
+        String password
+) {
+
+}
