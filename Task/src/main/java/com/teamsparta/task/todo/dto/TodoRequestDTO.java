@@ -17,10 +17,13 @@ public record TodoRequestDTO(
         @Schema(description = "내용")
         String content,
 
-        @Schema(description = "담당자 이메일")
         @NotBlank
-        @Email
         String username,
+
+//        @Schema(description = "담당자 이메일")
+//        @NotBlank
+//        @Email
+//        String username,
 
         @Schema(description = "비밀번호")
         @NotBlank

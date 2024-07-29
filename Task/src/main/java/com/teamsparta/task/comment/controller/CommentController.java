@@ -50,10 +50,14 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<CommentResponseDto> addComment(
             @RequestBody CommentRequestDto commentRequest,
-            @RequestParam Long todoId,
-            @RequestParam String userId
+            @RequestParam Long todoId
+//            @RequestParam String userId
     ) {
-        Comment createdComment = commentService.addComment(commentRequest, todoId, userId);
+        // 현재 로그인한 사용자 ID 가져오기. 이 밑의 세줄이 바로 RequestParam없이 인식하는것
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getName();
+
+        Comment createdComment = commentService.addComment(commentRequest, todoId, currentUserId);
 
         CommentResponseDto responseDto = new CommentResponseDto(
                 createdComment.getCommentId(),
@@ -74,11 +78,13 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> updateComment(
             @PathVariable Long commentId,
             @RequestBody CommentRequestDto commentRequest,
-            @RequestParam Long todoId,
-            @RequestParam String userId
+            @RequestParam Long todoId
+//            @RequestParam String userId
     ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserId = authentication.getName();
         // 댓글 업데이트
-        Comment updatedComment = commentService.updateComment(commentId, commentRequest, todoId, userId);
+        Comment updatedComment = commentService.updateComment(commentId, commentRequest, todoId, currentUserId);
 
         CommentResponseDto responseDto = new CommentResponseDto(
                 updatedComment.getCommentId(),
