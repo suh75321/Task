@@ -3,14 +3,15 @@ package com.teamsparta.task.comment.model;
 import com.teamsparta.task.todo.model.Todo;
 import com.teamsparta.task.user.model.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class Comment {
 
     @Id
@@ -34,5 +35,18 @@ public class Comment {
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+    }
+
+    // 생성자
+    @Builder
+    public Comment(String content, User user, Todo todo) {
+        this.content = content;
+        this.user = user;
+        this.todo = todo;
+    }
+
+    // 수정 메서드
+    public void update(String content) {
+        this.content = content;
     }
 }
