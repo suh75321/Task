@@ -17,6 +17,7 @@ public record TodoRequestDTO(
         @Schema(description = "내용")
         String content,
 
+        @Schema(description = "유저 이름")
         @NotBlank
         String username,
 

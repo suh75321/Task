@@ -1,9 +1,11 @@
 package com.teamsparta.task.comment.service;
 
+import com.teamsparta.task.exception.TodoNotFoundException;
 import com.teamsparta.task.comment.dto.CommentRequestDto;
 import com.teamsparta.task.comment.model.Comment;
 import com.teamsparta.task.comment.repository.CommentRepository;
 import com.teamsparta.task.exception.CommentNotFoundException;
+import com.teamsparta.task.exception.InvalidArgumentException;
 import com.teamsparta.task.exception.UserNotFoundException;
 import com.teamsparta.task.todo.model.Todo;
 import com.teamsparta.task.todo.repository.TodoRepository;
@@ -22,84 +24,84 @@ public class CommentService {
     private final TodoRepository todoRepository;
     private final UserRepository userRepository;
 
-    // 생성자 주입
     public CommentService(CommentRepository commentRepository, TodoRepository todoRepository, UserRepository userRepository) {
         this.commentRepository = commentRepository;
         this.todoRepository = todoRepository;
         this.userRepository = userRepository;
     }
 
-    // 모든 댓글 조회
+
     public List<Comment> findAllComments() {
         return commentRepository.findAll();
     }
 
-    // 새로운 댓글 추가
+    // 새로운 댓글을 추가합니다.
     public Comment addComment(CommentRequestDto commentRequestDto, Long todoId, String userId) {
-        // 예외 처리: 댓글 내용이 비어 있는 경우
+        // 댓글 내용이 비어있는지 확인하고, 비어있다면 InvalidArgumentException(잘못된 접근방식입니다.)
         if (commentRequestDto.getContent() == null || commentRequestDto.getContent().isEmpty()) {
-            throw new IllegalArgumentException("댓글 내용을 입력해 주세요.");
+            throw new InvalidArgumentException();
         }
-
-        // 예외 처리: 선택한 일정의 ID를 입력받지 않은 경우
+        // todoId가 null인지 확인하고, null이라면 InvalidArgumentException
         if (todoId == null) {
-            throw new IllegalArgumentException("일정 ID를 입력해 주세요.");
+            throw new InvalidArgumentException();
         }
 
-        // 일정 확인, 예외 처리: 일정이 DB에 저장되지 않은 경우
+        // 주어진 todoId에 해당하는 Todo를 조회하고, 존재하지 않으면 TodoNotFoundException(할일을 찾을 수 없습니다.)
         Todo todo = todoRepository.findById(todoId)
-                .orElseThrow(() -> new IllegalArgumentException("일정이 존재하지 않습니다."));
+                .orElseThrow(TodoNotFoundException::new);
 
-        // 사용자 확인, 예외 처리: 사용자가 DB에 저장되지 않은 경우
+        // 주어진 userId에 해당하는 User를 조회하고, 존재하지 않으면 UserNotFoundException(사용자를 찾을 수 없습니다.)
         User user = userRepository.findById(Long.valueOf(userId))
-                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+                .orElseThrow(UserNotFoundException::new);
 
-        // 댓글 생성
+        // 댓글 엔티티로 Comment 객체를 생성하여 저장
         Comment comment = Comment.builder()
                 .content(commentRequestDto.getContent())
                 .todo(todo)
                 .user(user)
                 .build();
 
+        // 생성된 Comment 객체를 저장하고 반환
         return commentRepository.save(comment);
     }
 
-    // 댓글 업데이트
     public Comment updateComment(Long commentId, CommentRequestDto commentRequest, Long todoId, String userId) {
-        // 예외 처리: 댓글이 존재하지 않는 경우
+        // 주어진 commentId에 해당하는 Comment를 조회하고, 존재하지 않으면 CommentNotFoundException
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException("댓글이 존재하지 않습니다."));
+                .orElseThrow(CommentNotFoundException::new);
 
-        // 일정 확인: Todo 2에 만든 댓글을 todo1이라고 해도 수정되는 것 방지
+        // 주어진 todoId가 해당 Comment의 Todo와 일치하는지 확인하고, 일치하지 않으면 InvalidArgumentException
         Todo todo = comment.getTodo();
         if (!Objects.equals(todo.getId(), todoId)) {
-            throw new IllegalArgumentException("댓글이 해당 일정에 속하지 않습니다.");
+            throw new InvalidArgumentException();
         }
 
-        // 사용자 확인
+        // 주어진 userId에 해당하는 User를 조회하고, 존재하지 않으면 UserNotFoundException
         User user = userRepository.findById(Long.valueOf(userId))
-                .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
+                .orElseThrow(UserNotFoundException::new);
 
-        // 현재 사용자와 댓글 작성자 확인
+        // 현재 사용자(userId)가 해당 Comment의 작성자인지 확인하고, 일치하지 않으면 InvalidArgumentException
         if (!comment.getUser().getId().equals(Long.parseLong(userId))) {
-            throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
+            throw new InvalidArgumentException();
         }
 
-        // 댓글 내용 수정
+        // 댓글 내용이 비어있지 않으면 업데이트
         if (commentRequest.getContent() != null && !commentRequest.getContent().isEmpty()) {
             comment.update(commentRequest.getContent());
         }
 
+        // 업데이트된 Comment 객체를 저장하고 반환
         return commentRepository.save(comment);
     }
-    // 댓글 삭제
-    public void deleteComment(Long commentId, String currentUserId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("댓글이 존재하지 않습니다."));
 
-        // 현재 사용자와 댓글 작성자 확인
+    public void deleteComment(Long commentId, String currentUserId) {
+        // 주어진 commentId에 해당하는 Comment를 조회하고, 존재하지 않으면 CommentNotFoundException.
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(CommentNotFoundException::new);
+
+        // 현재 사용자(currentUserId)가 해당 Comment의 작성자인지 확인하고, 일치하지 않으면 InvalidArgumentException
         if (!comment.getUser().getId().equals(Long.parseLong(currentUserId))) {
-            throw new IllegalArgumentException("사용자가 일치하지 않습니다.");
+            throw new InvalidArgumentException();
         }
 
         commentRepository.delete(comment);
