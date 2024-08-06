@@ -6,12 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
+//카카오와 통합
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "users")//테이블 이름은 users로 user이 아니다. 유저로 하면 오류가 나기 때문이다.
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,29 +23,44 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username; // 사용자 이름 (username)
 
-    @Column(nullable = false)
-    private String password; // 비밀번호 (password)
+    @Column
+    private String password; // 비밀번호 (password), 소셜 사용자의 경우 null일 수 있음
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserRoleEnum role; // 권한 (USER 또는 ADMIN)
+//    @Column(nullable = false) 나중에 관리자 추가할거면 주석 해제
+//    @Enumerated(EnumType.STRING)
+//    private UserRoleEnum role; // 권한 (USER 또는 ADMIN)
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt; // 생성일
 
-    // 매개변수를 받는 생성자 추가
-    public User(String nickname, String username, String password, UserRoleEnum  role, LocalDateTime createdAt) {
+    @Column(unique = true) // 카카오 ID 추가, 이건 카카오 ID는 유일하다는거
+    private Long kakaoId; // 카카오 사용자 ID 즉, 소셜 사용자의 경우에만 사용
+
+    @Column(nullable = true)
+    private String email; // 소셜로그인이 이메일 쓰니 추가
+
+    //일반 유저로그인용
+    public User(String nickname, String username, String password, String email, LocalDateTime createdAt) {
         this.nickname = nickname;
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.email = email;
         this.createdAt = createdAt;
     }
+    // 매개변수를 받는 생성자 추가, String email도 추가
+    //카카오 로그인용
+    public User(String nickname, String username, String password,String email, LocalDateTime createdAt, Long kakaoId) {
+        this.nickname = nickname;
+        this.username = username;
+        this.password = password;
+        this.createdAt = createdAt;
+        this.email = email; // 소셜로그인이 이메일 쓰니 추가
+        this.kakaoId = kakaoId;
+    }
 
-    // 생성일 자동 설정을 위한 메서드
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
 

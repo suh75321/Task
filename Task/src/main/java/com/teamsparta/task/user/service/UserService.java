@@ -27,7 +27,8 @@ public class UserService {
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
         String nickname = requestDto.getNickname();
-        UserRoleEnum role = UserRoleEnum.USER;
+        String email = requestDto.getEmail(); // 이메일 추가
+//        UserRoleEnum role = UserRoleEnum.USER;
 
         // 회원 중복 확인
         if (userRepository.findByUsername(username).isPresent()) {
@@ -35,7 +36,7 @@ public class UserService {
         }
 
         // 사용자 등록
-        User user = new User(nickname, username, password, role, LocalDateTime.now());
+        User user = new User(nickname, username, password, email, LocalDateTime.now());
         userRepository.save(user);
     }
 

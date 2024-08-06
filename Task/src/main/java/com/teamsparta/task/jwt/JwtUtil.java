@@ -46,7 +46,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String username) {
+    public String createToken(String username) {//나중에 관리자 연결할거면 UserRoleEnum을 넣기
         Date date = new Date();//현재 날짜를 가져옴
 
         return BEARER_PREFIX +
